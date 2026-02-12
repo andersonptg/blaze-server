@@ -6,19 +6,33 @@ const PORT = process.env.PORT || 3000;
 
 let doubleCache = [];
 
+// Função para atualizar resultados
 async function atualizarDouble() {
   try {
     const response = await axios.get(
-      "https://blaze.com/api/roulette_games/recent"
+      "https://blaze.com/api/roulette_games/recent",
+      {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          "Accept": "application/json",
+          "Referer": "https://blaze.com/"
+        },
+        timeout: 10000
+      }
     );
+
     doubleCache = response.data;
     console.log("Double atualizado:", new Date().toLocaleTimeString());
   } catch (err) {
-    console.log("Erro ao atualizar:", err.message);
+    if (err.response) {
+      console.log("Erro ao atualizar:", err.response.status);
+    } else {
+      console.log("Erro ao atualizar:", err.message);
+    }
   }
 }
 
-// Atualiza a cada 05 segundos
+// Atualiza a cada 5 segundos
 setInterval(atualizarDouble, 5000);
 
 // Rota principal
